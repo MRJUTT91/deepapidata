@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: #4ecdc4;
+        }
+        
+        .github-link {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .github-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .github-link i {
+            margin-right: 8px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: #4ecdc4;
+        }
+        
+        .api-form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #4ecdc4;
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #ff6b6b;
+        }
+        
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            min-height: 150px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: rgba(78, 205, 196, 0.2);
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        
+        .message.system {
+            background: rgba(255, 107, 107, 0.2);
+            border-bottom-left-radius: 0;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .online {
+            background: #4ecdc4;
+            box-shadow: 0 0 10px #4ecdc4;
+        }
+        
+        .offline {
+            background: #ff6b6b;
+        }
+        
+        .api-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .api-info h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .api-info h3 i {
+            margin-right: 10px;
+            color: #4ecdc4;
+        }
+        
+        .endpoint {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>API Testing Dashboard</span>
+            </div>
+            <a href="#" class="github-link">
+                <i class="fab fa-github"></i>
+                <span>View on GitHub</span>
+            </a>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-plug"></i>
+                    API Testing
+                </h2>
+                <div class="api-form">
+                    <div class="form-group">
+                        <label for="api-url">API Endpoint URL</label>
+                        <input type="text" id="api-url" placeholder="https://api.example.com/data" value="https://jsonplaceholder.typicode.com/posts">
+                    </div>
+                    <div class="form-group">
+                        <label for="api-method">HTTP Method</label>
+                        <select id="api-method">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="api-body">Request Body (for POST/PUT)</label>
+                        <textarea id="api-body" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                    <button id="test-api-btn">Test API</button>
+                    
+                    <div class="response">
+                        <h3>API Response</h3>
+                        <pre id="api-response">Response will appear here...</pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-comments"></i>
+                    Chat Section
+                </h2>
+                <div class="chat-section">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message system">
+                            <strong>System:</strong> Hello! How can I help you today?
+                        </div>
+                        <div class="message user">
+                            <strong>You:</strong> I'd like to test my API
+                        </div>
+                        <div class="message system">
+                            <strong>System:</strong> Sure! Enter your API endpoint and click "Test API"
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-input" placeholder="Type your message...">
+                        <button id="send-chat-btn">Send</button>
+                    </div>
+                </div>
+                
+                <div class="status">
+                    <div class="status-indicator online"></div>
+                    <span>API Connection: Active</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="api-info">
+            <h3>
+                <i class="fas fa-info-circle"></i>
+                API Integration Information
+            </h3>
+            <p>To connect your C# application to this API, use the following endpoints:</p>
+            
+            <div class="endpoint">
+                <strong>POST</strong> /api/message - Send a message from C# app to website
+            </div>
+            
+            <div class="endpoint">
+                <strong>GET</strong> /api/messages - Retrieve all messages
+            </div>
+            
+            <p>Example C# code for sending a message:</p>
+            <div class="endpoint">
+                var client = new HttpClient();<br>
+                var response = await client.PostAsJsonAsync("https://yourwebsite.com/api/message", new {<br>
+                &nbsp;&nbsp;user = "C# App",<br>
+                &nbsp;&nbsp;text = "Hello from C#"<br>
+                });
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Testing functionality
+        document.getElementById('test-api-btn').addEventListener('click', async function() {
+            const url = document.getElementById('api-url').value;
+            const method = document.getElementById('api-method').value;
+            const body = document.getElementById('api-body').value;
+            const responseElement = document.getElementById('api-response');
+            
+            responseElement.textContent = 'Testing API...';
+            
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (method === 'POST' || method === 'PUT') {
+                    options.body = body;
+                }
+                
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                responseElement.textContent = JSON.stringify(data, null, 2);
+                
+                // Add to chat
+                addMessage('system', `API tested: ${method} ${url} returned status ${response.status}`);
+            } catch (error) {
+                responseElement.textContent = `Error: ${error.message}`;
+                addMessage('system', `API test failed: ${error.message}`);
+            }
+        });
+        
+        // Chat functionality
+        document.getElementById('send-chat-btn').addEventListener('click', function() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage('user', message);
+                input.value = '';
+                
+                // Simulate response after a short delay
+                setTimeout(() => {
+                    addMessage('system', `Received your message: "${message}"`);
+                }, 1000);
+            }
+        });
+        
+        // Allow pressing Enter to send chat message
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('send-chat-btn').click();
+            }
+        });
+        
+        function addMessage(sender, text) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            messageElement.innerHTML = `<strong>${sender === 'user' ? 'You' : 'System'}:</strong> ${text}`;
+            
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
